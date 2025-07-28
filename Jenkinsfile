@@ -27,7 +27,7 @@ pipeline {
                     sh """
                         ${MAVEN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=spring-petclinic \
-                        -Dsonar.login=$SONAR_TOKEN
+                        -Dsonar.login=${SONAR_TOKEN}
 
                         # Simulated check — you should replace this with actual logic if needed
                         echo "BUILD SUCCESS" > status.txt
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 script {
                     def output = sh(script: "cat status.txt", returnStdout: true).trim()
-                    if (output != "BUILD_READY") {
+                    if (output != "BUILD SUCCESS") {
                         error("Sonar analysis result not approved. Stopping pipeline.")
                     } else {
                         echo "Build condition met. Proceeding to next stage."
