@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent { label 'MandS' } 
 
     environment {
         SONARQUBE_ENV = 'SonarQube' // Jenkins > Configure System > SonarQube server
@@ -14,14 +14,12 @@ pipeline {
     stages {
 
         stage('Checkout Code') {
-            agent { label 'MandS' }
             steps {
                 git url: 'https://github.com/AnkitaJaiswal-git/spring-petclinic.git', branch: 'Rupesh'
             }
         }
 
         stage('SonarQube Analysis') {
-            agent { label 'MandS' }
             steps {
                 withSonarQubeEnv("${SONARQUBE_ENV}") {
                     sh """
@@ -37,7 +35,6 @@ pipeline {
         }
 
         stage('Verify Condition to Proceed') {
-            agent { label 'MandS' }
             steps {
                 script {
                     def output = sh(script: "cat status.txt", returnStdout: true).trim()
@@ -51,14 +48,12 @@ pipeline {
         }
 
         stage('Build Project') {
-            agent { label 'MandS' }
             steps {
                 sh "${MAVEN_HOME}/bin/mvn package -DskipTests"
             }
         }
 
         stage('Deploy to EC2') {
-            agent { label 'MandS' }
             steps {
                 sshagent (credentials: ["${EC2_SSH_CRED_ID}"]) {
                     sh """
